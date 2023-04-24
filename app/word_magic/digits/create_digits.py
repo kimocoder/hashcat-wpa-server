@@ -42,7 +42,7 @@ def create_days(flashback_years: int, date_fmt=("%m%d%Y", "%d%m%Y", "%Y%m%d", "%
             days.add(dt.strftime(date_formatted))
     for year in range(1000, end_day.year):
         year = str(year)
-        for reverse in range(2):
+        for _ in range(2):
             days.add(f"{year}{year}")
             year = year[::-1]
         days.add(f"{year}{year[2:] * 2}")
@@ -130,7 +130,7 @@ def generate_mask_stdout(mask_len: int, pattern_len: int):
     for mask in itertools.product(pattern, repeat=mask_len):
         counts = list(collections.Counter(mask).values())
         max_count = max(counts)
-        diffs = list(max_count - count for count in counts)
+        diffs = [max_count - count for count in counts]
         if all(diff <= 1 for diff in diffs):
             print(''.join(mask))
 

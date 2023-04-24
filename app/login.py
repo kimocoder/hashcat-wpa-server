@@ -57,7 +57,7 @@ class Role(db.Model):
         return Role.query.filter_by(name=role_enum).first()
 
     def __repr__(self):
-        return "<Role {}>".format(self.name.value)
+        return f"<Role {self.name.value}>"
 
 
 class UserRoles(db.Model):
@@ -141,7 +141,7 @@ def user_has_roles(user: User, *requirements: RoleEnum) -> bool:
     """
     if not user.is_authenticated:
         return False
-    user_roles = set(role.name for role in user.roles)
+    user_roles = {role.name for role in user.roles}
     return set(requirements).issubset(user_roles)
 
 
@@ -157,12 +157,14 @@ def roles_required(*requirements: RoleEnum):
         @wraps(view_function)    # Tells debuggers that is is a function wrapper
         def decorator(*args, **kwargs):
             # User must have the required roles
-            if not user_has_roles(current_user, *requirements):
-                # Redirect to the unauthorized page
-                return flask.abort(HTTPStatus.FORBIDDEN, description="You do not have the permissions.")
-
-            # It's OK to call the view
-            return view_function(*args, **kwargs)
+            return (
+                view_function(*args, **kwargs)
+                if user_has_roles(current_user, *requirements)
+                else flask.abort(
+                    HTTPStatus.FORBIDDEN,
+                    description="You do not have the permissions.",
+                )
+            )
 
         return decorator
 

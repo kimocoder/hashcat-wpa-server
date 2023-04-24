@@ -16,10 +16,7 @@ def hamming_circle(s: str, n: int, alphabet: Union[str, List[str]]):
             for p, r in zip(positions, replacements):
                 cousin_insert.insert(p, alphabet[r])
                 cousin_delete[p] = ''
-                if cousin[p] == alphabet[r]:
-                    cousin[p] = alphabet[-1]
-                else:
-                    cousin[p] = alphabet[r]
+                cousin[p] = alphabet[-1] if cousin[p] == alphabet[r] else alphabet[r]
             yield ''.join(cousin)
             yield ''.join(cousin_insert)
             yield ''.join(cousin_delete)

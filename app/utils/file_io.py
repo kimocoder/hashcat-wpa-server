@@ -18,9 +18,7 @@ def read_plain_key(key_path):
     for line in lines:
         essid, key = line.split(':')[-2:]
         found_keys.add("{essid}:{key}".format(essid=essid, key=key))
-    if not found_keys:
-        return None
-    return ', '.join(found_keys)
+    return ', '.join(found_keys) if found_keys else None
 
 
 def read_last_benchmark():

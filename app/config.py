@@ -26,13 +26,15 @@ LOGS_DIR.mkdir(exist_ok=True)
 DATABASE_DIR.mkdir(exist_ok=True)
 HASHCAT_BRAIN_PASSWORD_PATH.parent.mkdir(exist_ok=True)
 
+
+
 class Config:
     """ Flask application config """
 
     SECRET_KEY = secrets.token_bytes(64)
 
     # Flask-SQLAlchemy settings
-    SQLALCHEMY_DATABASE_URI = "sqlite:///{}".format(DATABASE_PATH)
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{DATABASE_PATH}"
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
     # Airodump capture files

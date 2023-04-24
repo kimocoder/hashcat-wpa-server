@@ -69,7 +69,7 @@ def _collect_essid_parts(essid_origin: str, max_compounds=MAX_COMPOUNDS):
         essid = regex_non_char.sub('', essid)
         essid_parts.update(modify_case(essid))
     essid_parts.update(modify_case(essid_origin))
-    essid_parts = set(word for word in essid_parts if len(word) > 1)
+    essid_parts = {word for word in essid_parts if len(word) > 1}
     essid_parts.update(modify_case(essid_origin))  # special case when ESSID is a single letter
     return essid_parts
 
@@ -111,7 +111,7 @@ def _run_essid_digits(compounds_fpath: Path, hashcat_cmd=None, fast=True):
     if compounds_count > 1000 and hashcat_cmd is not None:
         # reduce IO operations, run the hashcat attack directly
         fast = False
-    for reverse in range(2):
+    for _ in range(2):
         with tempfile.NamedTemporaryFile(mode='w+', errors='ignore') as f:
             hashcat_stdout = HashcatCmdStdout(outfile=f.name)
             hashcat_stdout.add_wordlists(*wordlist_order, options=['-a1'])

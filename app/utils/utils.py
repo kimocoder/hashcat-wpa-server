@@ -14,7 +14,7 @@ def subprocess_call(args: List[str]):
     :param args: shell args
     """
     args = list(map(str, args))
-    logger.debug(">>> {}".format(' '.join(args)))
+    logger.debug(f">>> {' '.join(args)}")
     if not all(args):
         raise ValueError(f"Empty arg in {args}")
     completed = subprocess.run(args, universal_newlines=True,

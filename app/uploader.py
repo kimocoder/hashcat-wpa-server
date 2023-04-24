@@ -61,29 +61,30 @@ class UploadForm(FlaskForm):
         self.wordlist.choices = wordlist_choices()
 
     def get_wordlist_path(self):
-        if self.wordlist.data == NONE_STR:
-            return None
-        return Path(self.wordlist.data)
+        return None if self.wordlist.data == NONE_STR else Path(self.wordlist.data)
 
     def get_wordlist_name(self):
         wordlist = find_wordlist_by_path(self.get_wordlist_path())
-        if wordlist is None:
-            return None
-        return wordlist.name
+        return None if wordlist is None else wordlist.name
 
     def get_rule(self):
         return Rule.from_data(self.rule.data)
 
     @property
     def runtime(self):
-        runtime = estimate_runtime_fmt(wordlist_path=self.get_wordlist_path(), rule=self.get_rule())
-        return runtime
+        return estimate_runtime_fmt(
+            wordlist_path=self.get_wordlist_path(), rule=self.get_rule()
+        )
 
     def hashcat_args(self, secret=False):
         hashcat_args = []
         if self.brain.data:
-            hashcat_args.append("--brain-client")
-            hashcat_args.append(f"--brain-client-features={self.brain_client_feature.data}")
+            hashcat_args.extend(
+                (
+                    "--brain-client",
+                    f"--brain-client-features={self.brain_client_feature.data}",
+                )
+            )
             if secret:
                 hashcat_args.append(f"--brain-password={read_hashcat_brain_password()}")
         return hashcat_args

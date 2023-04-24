@@ -33,23 +33,17 @@ class WordListInfo:
 
     @property
     def name(self):
-        if self.custom:
-            return f"user/{self.path.name}"
-        return self.path.name
+        return f"user/{self.path.name}" if self.custom else self.path.name
 
     @property
     def custom(self) -> bool:
         return str(self.path).startswith(str(WORDLISTS_USER_DIR))
 
     def __str__(self):
-        extra = ""
-        if self.rate is not None:
-            extra = f"rate={self.rate}"
+        extra = f"rate={self.rate}" if self.rate is not None else ""
         if self.url is not None and not self.path.exists():
             extra = f"{extra}; requires downloading"
-        if extra:
-            return f"{self.name} [{extra}]"
-        return self.name
+        return f"{self.name} [{extra}]" if extra else self.name
 
     def download(self):
         if self.path is None or self.path.exists():
@@ -106,9 +100,7 @@ class WordListDefault:
 
     @staticmethod
     def get(path):
-        d = {}
-        for wlist in WordListDefault.list():
-            d[str(wlist.path)] = wlist
+        d = {str(wlist.path): wlist for wlist in WordListDefault.list()}
         return d.get(str(path))
 
 
@@ -162,8 +154,7 @@ def estimate_runtime_fmt(wordlist_path: Path, rule: Rule) -> str:
     n_candidates += WordListInfo.fast_count
 
     runtime = int(n_candidates / speed)  # in seconds
-    runtime_ftm = str(datetime.timedelta(seconds=runtime))
-    return runtime_ftm
+    return str(datetime.timedelta(seconds=runtime))
 
 
 def create_fast_wordlists():
@@ -191,10 +182,7 @@ def find_wordlist_by_path(wordlist_path) -> Union[WordListInfo, None]:
     if wordlist_path is None:
         return None
     wlist = WordListDefault.get(wordlist_path)
-    if wlist is None:
-        # user wordlist
-        return WordListInfo(wordlist_path)
-    return deepcopy(wlist)
+    return WordListInfo(wordlist_path) if wlist is None else deepcopy(wlist)
 
 
 def wordlist_choices():
@@ -213,8 +201,7 @@ def cyrrilic2qwerty(wlist: WordList):
     ru = "йцукенгшщзхъфывапролджэячсмитьбю."
     en = "qwertyuiop[]asdfghjkl;'zxcvbnm,./"
     table = txt_cyrrilic.maketrans(ru, en)
-    txt_qwerty = txt_cyrrilic.translate(table)
-    return txt_qwerty
+    return txt_cyrrilic.translate(table)
 
 
 if __name__ == '__main__':

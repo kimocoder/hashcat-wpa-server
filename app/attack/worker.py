@@ -163,7 +163,7 @@ class HashcatWorker:
         job_id = id(future)
         lock = self.locks.pop(job_id, None)
         if lock is None:
-            logger.error("Could not find lock for job {}".format(job_id))
+            logger.error(f"Could not find lock for job {job_id}")
             return
         with lock:
             if future.cancelled():

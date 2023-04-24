@@ -28,15 +28,11 @@ class Rule(Enum):
 
     @staticmethod
     def to_form():
-        # (id_value, description) pairs
-        choices = ((NONE_STR, "(None)"), (Rule.BEST_64.value, Rule.BEST_64.value))
-        return choices
+        return (NONE_STR, "(None)"), (Rule.BEST_64.value, Rule.BEST_64.value)
 
     @staticmethod
     def from_data(name: str):
-        if name in (None, NONE_STR):
-            return None
-        return Rule(name)
+        return None if name in (None, NONE_STR) else Rule(name)
 
 
 @unique
@@ -77,13 +73,17 @@ class BrainClientFeature(Enum):
 
     @staticmethod
     def to_form():
-        # (id_value, description) pairs
-        choices = (
+        return (
             (BrainClientFeature.PASSWORDS.value, "Store tried passwords"),
-            (BrainClientFeature.POSITIONS.value, "Store wordlist attack positions"),
-            (BrainClientFeature.PASSWORDS_AND_POSITIONS.value, "Store tried passwords and attack positions"),
+            (
+                BrainClientFeature.POSITIONS.value,
+                "Store wordlist attack positions",
+            ),
+            (
+                BrainClientFeature.PASSWORDS_AND_POSITIONS.value,
+                "Store tried passwords and attack positions",
+            ),
         )
-        return choices
 
 
 class HashcatMode:
@@ -104,7 +104,7 @@ class HashcatMode:
         suffix = str(suffix).lstrip('.')
         if suffix not in HashcatMode.valid_suffixes():
             raise ValueError(f"Invalid capture file suffix: '{suffix}'")
-        if suffix in ("cap", "pcap"):
+        if suffix in {"cap", "pcap"}:
             raise ValueError(f"Convert '{suffix}' to hccapx/2500 file with "
                              "'cap2hccapx' command.")
         if suffix == "pcapng":
@@ -112,9 +112,7 @@ class HashcatMode:
                              "'hcxpcapngtool' command.")
         if suffix == "hccapx":
             return "2500"
-        if suffix == "pmkid":
-            return "16800"
-        return suffix
+        return "16800" if suffix == "pmkid" else suffix
 
 
 @unique
@@ -125,9 +123,7 @@ class Workload(Enum):
 
     @staticmethod
     def to_form():
-        # (id_value, description) pairs
-        choices = tuple((wl.value, wl.name) for wl in Workload)
-        return choices
+        return tuple((wl.value, wl.name) for wl in Workload)
 
 
 class TaskInfoStatus:
@@ -159,9 +155,7 @@ class ProgressLock:
         self.set_status(TaskInfoStatus.CANCELLED)
         if self.future is None:
             return False
-        if self.future.cancelled():
-            return True
-        return self.future.cancel()
+        return True if self.future.cancelled() else self.future.cancel()
 
     def finish(self):
         # called after the completion or cancellation

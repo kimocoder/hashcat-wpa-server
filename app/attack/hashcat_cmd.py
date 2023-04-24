@@ -55,17 +55,16 @@ class HashcatCmd:
         for rule in self.rules:
             if rule is not None:
                 rule_path = str(rule.path)
-                command.append("--rules={}".format(shlex.quote(rule_path)))
-        command.append("--outfile={}".format(shlex.quote(self.outfile)))
+                command.append(f"--rules={shlex.quote(rule_path)}")
+        command.append(f"--outfile={shlex.quote(self.outfile)}")
         if self.session is not None:
-            command.append("--session={}".format(shlex.quote(self.session)))
+            command.append(f"--session={shlex.quote(self.session)}")
         self._populate_class_specific(command)
         if self.mask is not None:
             # masks are not compatible with wordlists
             command.extend(['-a3', self.mask])
         else:
-            for word_list in self.wordlists:
-                command.append(shlex.quote(word_list))
+            command.extend(shlex.quote(word_list) for word_list in self.wordlists)
         command.append("--force")
         return command
 
@@ -97,10 +96,14 @@ class HashcatCmdCapture(HashcatCmd):
         if int(os.getenv('POTFILE_DISABLE', 0)):
             # localhost debug mode
             command.append("--potfile-disable")
-        command.append("--status")
-        command.append("--status-timer={}".format(HASHCAT_STATUS_TIMER))
-        command.append("--machine-readable")
-        command.append(self.hcap_file)
+        command.extend(
+            (
+                "--status",
+                f"--status-timer={HASHCAT_STATUS_TIMER}",
+                "--machine-readable",
+                self.hcap_file,
+            )
+        )
 
 
 class HashcatCmdStdout(HashcatCmd):

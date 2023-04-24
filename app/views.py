@@ -113,7 +113,7 @@ def user_profile():
 @login_required
 def progress():
     tasks_progress = []
-    user_tasks_id = set(task.id for task in current_user.uploads)
+    user_tasks_id = {task.id for task in current_user.uploads}
     locks = set(hashcat_worker.locks.values())
     locks.update(hashcat_worker.locks_onetime)
     hashcat_worker.locks_onetime.clear()

@@ -190,8 +190,7 @@ def crack_22000():
     if args.extra:
         print("Running extra run_names_with_digits attack")
         attack.run_names_with_digits()
-    key_password = read_plain_key(attack.key_file)
-    if key_password:
+    if key_password := read_plain_key(attack.key_file):
         print("WPA key is found!\n", key_password)
     else:
         print("WPA key is not found.")
